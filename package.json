@@ -8,12 +8,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andrewlimcj/cloud-feature-toggles.git"
+    "url": "git+https://github.com/andrewlimcj/cloud-feature-toggles"
   },
+  "keywords": [
+    "cloud", 
+    "feature", 
+    "toggles", 
+    "toggle", 
+    "feature toggle", 
+    "feature toggles", 
+    "AWS"
+  ],
   "author": "andrewlimcj",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/andrewlimcj/cloud-feature-toggles/issues"
   },
-  "homepage": "https://github.com/andrewlimcj/cloud-feature-toggles#readme"
+  "homepage": "https://github.com/andrewlimcj/cloud-feature-toggles#readme",
+  "dependencies": {
+    "aws-sdk": "^2.644.0"
+  }
 }
