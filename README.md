@@ -33,21 +33,21 @@ JSON format that represents the feature toggle:
 // instantiate module with options object
 const cloudFeatureToggles = require('cloud-feature-toggles')({
   aws: {
-		region: '<REGION>', // e.g. ap-southeast-1
-		s3: {
-			bucket: '<FEATURE_TOGGLES_BUCKET>'  // e.g. my-feature-toggles
-		}
-	}
+    region: '<REGION>', // e.g. ap-southeast-1
+    s3: {
+      bucket: '<FEATURE_TOGGLES_BUCKET>'  // e.g. my-feature-toggles
+    }
+  }
 });
   
 const main = async() => {
-	// use isEnabled method to check if MY_FEATURE_TOGGLE is enabled
-	// note the await keyword
-	if (await cloudFeatureToggles.isEnabled('MY_FEATURE_TOGGLE')) {
-		// continue with MY_FEATURE flow
-	} else {
-		// continue with normal flow
-	}
+  // use isEnabled method to check if MY_FEATURE_TOGGLE is enabled
+  // note the await keyword
+  if (await cloudFeatureToggles.isEnabled('MY_FEATURE_TOGGLE')) {
+    // continue with MY_FEATURE flow
+  } else {
+    // continue with normal flow
+  }
 }
 
 main();
