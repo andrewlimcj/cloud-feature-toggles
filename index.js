@@ -1,26 +1,33 @@
 const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
+let s3, documentClient;
 
-const CONSOLE_LOG_PREFIX = '[cloud-feature-toggles]'
+const CONSOLE_LOG_PREFIX = '[cloud-feature-toggles]';
+const CONSOLE_LOG_S3_PREFIX = '[S3]';
+const CONSOLE_LOG_DYNAMODB_PREFIX = '[DynamoDB]';
 
 module.exports = (options) => {
   init(options);
 
   isEnabled = async (featureToggle) => {
-    if (options.aws.s3) {
-      try {
-        const featureToggleConfig = await getObjectS3(options.aws.s3.bucket, featureToggle);
+    // default
+    let featureToggleConfig = {
+      isEnabled: false
+    };
 
-        return featureToggleConfig.isEnabled;
-      } catch (err) {
-        console.warn(`${CONSOLE_LOG_PREFIX} Error in retrieving config from AWS S3 - ` + err);
-        console.warn(`${CONSOLE_LOG_PREFIX} Default to return false`);
-
-        return false;
+    try {
+      if (options.aws.s3) {
+        featureToggleConfig = await getS3Object(options.aws.s3.bucket, featureToggle);
+      } else if (options.aws.dynamoDB) {
+        featureToggleConfig = await getDynamoDBItem(options.aws.dynamoDB.tableName, featureToggle);
       }
+    } catch (err) {
+      console.warn(`${CONSOLE_LOG_PREFIX} Error in retrieving config: ` + err);
+      console.warn(`${CONSOLE_LOG_PREFIX} Default to return false`);
+
+      return false;
     }
 
-    return false;
+    return featureToggleConfig.isEnabled;
   };
 
   return {
@@ -39,14 +46,28 @@ const init = (options) => {
 
   if (options.aws) {
     if (!options.aws.region || options.aws.region === null) {
-      throw new Error('Missing region in AWS configuration');
+      throw new Error('Missing region parameter in AWS configuration');
     }
 
     AWS.config.update({ region: options.aws.region });
+
+    if (options.aws.s3) {
+      if (!options.aws.s3.bucket || options.aws.s3.bucket === null) {
+        throw new Error('Missing bucket parameter in S3 configuration');
+      }
+
+      s3 = new AWS.S3();
+    } else if (options.aws.dynamoDB) {
+      if (!options.aws.dynamoDB.tableName || options.aws.dynamoDB.tableName === null) {
+        throw new Error('Missing tableName parameter in dynamoDB configuration');
+      }
+
+      documentClient = new AWS.DynamoDB.DocumentClient();
+    }
   }
 }
 
-const getObjectS3 = (bucket, key) => {
+const getS3Object = (bucket, key) => {
   return new Promise((resolve, reject) => {
     const params = {
       Bucket: bucket,
@@ -55,9 +76,32 @@ const getObjectS3 = (bucket, key) => {
 
     s3.getObject(params, (err, data) => {
       if (err) {
-        reject(new Error(err.message));
+        reject(`${CONSOLE_LOG_S3_PREFIX} ${err.message}`);
       } else {
         resolve(JSON.parse(data.Body.toString('utf-8')));
+      }
+    });
+  });
+}
+
+const getDynamoDBItem = (tableName, id) => {
+  return new Promise((resolve, reject) => {
+    const params = {
+      TableName: tableName,
+      Key: {
+        id
+      }
+    };
+
+    documentClient.get(params, (err, data) => {
+      if (err) {
+        reject(`${CONSOLE_LOG_DYNAMODB_PREFIX} ${err.message}`);
+      } else {
+        if (!data.Item) {
+          reject(`${CONSOLE_LOG_DYNAMODB_PREFIX} Item not found`);
+        }
+
+        resolve(data.Item);
       }
     });
   });
