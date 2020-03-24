@@ -1,6 +1,6 @@
 {
   "name": "cloud-feature-toggles",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Cloud based feature toggles",
   "main": "index.js",
   "scripts": {
