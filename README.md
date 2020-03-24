@@ -32,7 +32,7 @@ JSON format that represents the feature toggle:
 ```javascript
 // instantiate module with options object
 const cloudFeatureToggles = require('cloud-feature-toggles')({
-	aws: {
+  aws: {
 		region: '<REGION>', // e.g. ap-southeast-1
 		s3: {
 			bucket: '<FEATURE_TOGGLES_BUCKET>'  // e.g. my-feature-toggles
