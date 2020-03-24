@@ -1,0 +1,19 @@
+{
+  "name": "cloud-feature-toggles",
+  "version": "1.0.0",
+  "description": "Cloud based feature toggles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewlimcj/cloud-feature-toggles.git"
+  },
+  "author": "andrewlimcj",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrewlimcj/cloud-feature-toggles/issues"
+  },
+  "homepage": "https://github.com/andrewlimcj/cloud-feature-toggles#readme"
+}
